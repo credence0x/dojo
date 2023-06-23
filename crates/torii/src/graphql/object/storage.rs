@@ -105,7 +105,14 @@ fn add_arguments(field: Field, field_type_mapping: TypeMapping) -> Field {
     field_type_mapping
         .into_iter()
         .fold(field, |field, (name, ty)| {
-            field.argument(InputValue::new(name.as_str(), TypeRef::named(ty)))
+            // use cairo primitive types for arguments
+            if let Ok(input) = ScalarType::from_str(&ty) {
+                if input.is_cairo_type() {
+                    return field.argument(InputValue::new(name.as_str(), TypeRef::named(ty)));
+                }
+            }
+
+            field
         })
         .argument(InputValue::new("limit", TypeRef::named(TypeRef::INT)))
 }

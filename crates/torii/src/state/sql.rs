@@ -168,8 +168,17 @@ impl State for Sql {
         );
 
         for member in component.clone().members {
-            let sql_type = ScalarType::from_str(member.ty).map(|t| t.as_sql_type())?;
-            component_table_query.push_str(&format!("external_{} {}, ", member.name, sql_type));
+            // TODO: how should we handle nested components?
+            // for now, we skip members that are not cairo primitive types
+            if let Ok(ty) = ScalarType::from_str(&member.ty) {
+                if ty.is_cairo_type() {
+                    component_table_query.push_str(&format!(
+                        "external_{} {}, ",
+                        member.name,
+                        ty.as_sql_type()
+                    ));
+                }
+            }
         }
 
         component_table_query.push_str(

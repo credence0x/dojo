@@ -56,6 +56,22 @@ impl ScalarType {
         .collect()
     }
 
+    pub fn cairo_types() -> HashSet<ScalarType> {
+        vec![
+            ScalarType::U8,
+            ScalarType::U16,
+            ScalarType::U32,
+            ScalarType::U64,
+            ScalarType::U128,
+            ScalarType::U256,
+            ScalarType::USize,
+            ScalarType::Bool,
+            ScalarType::Felt252,
+        ]
+        .into_iter()
+        .collect()
+    }
+
     pub fn numeric_types() -> HashSet<ScalarType> {
         vec![
             ScalarType::U8,
@@ -86,6 +102,10 @@ impl ScalarType {
 
     pub fn is_numeric_type(&self) -> bool {
         ScalarType::numeric_types().contains(self)
+    }
+
+    pub fn is_cairo_type(&self) -> bool {
+        ScalarType::cairo_types().contains(self)
     }
 
     pub fn from_str<S: AsRef<str>>(s: S) -> Result<ScalarType, anyhow::Error> {
