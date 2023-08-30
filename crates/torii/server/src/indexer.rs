@@ -1,6 +1,5 @@
 use std::error::Error;
 
-use dojo_world::manifest::Manifest;
 use starknet::providers::jsonrpc::{JsonRpcClient, JsonRpcTransport};
 use starknet_crypto::FieldElement;
 use torii_core::sql::Executable;
@@ -14,7 +13,6 @@ pub struct Indexer<'a, S: State + Executable, T: JsonRpcTransport + Sync + Send>
     storage: &'a S,
     provider: &'a JsonRpcClient<T>,
     engine: Engine<'a, S, T>,
-    manifest: Manifest,
 }
 
 impl<'a, S: State + Executable, T: JsonRpcTransport + Sync + Send> Indexer<'a, S, T> {
@@ -22,7 +20,6 @@ impl<'a, S: State + Executable, T: JsonRpcTransport + Sync + Send> Indexer<'a, S
         storage: &'a S,
         provider: &'a JsonRpcClient<T>,
         processors: Processors<S, T>,
-        manifest: Manifest,
         world_address: FieldElement,
         start_block: u64,
     ) -> Self {
@@ -32,7 +29,7 @@ impl<'a, S: State + Executable, T: JsonRpcTransport + Sync + Send> Indexer<'a, S
             processors,
             EngineConfig { world_address, start_block, ..Default::default() },
         );
-        Self { storage, provider, engine, manifest }
+        Self { storage, provider, engine }
     }
 
     pub async fn start(&self) -> Result<(), Box<dyn Error>> {

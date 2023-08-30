@@ -16,7 +16,6 @@ use torii_core::processors::register_component::RegisterComponentProcessor;
 use torii_core::processors::register_system::RegisterSystemProcessor;
 use torii_core::processors::store_set_record::StoreSetRecordProcessor;
 use torii_core::sql::Sql;
-use torii_core::State;
 use tracing::error;
 use tracing_subscriber::fmt;
 use url::Url;
@@ -82,7 +81,6 @@ async fn main() -> anyhow::Result<()> {
     let world_address = get_world_address(&args, &manifest, env.as_ref())?;
 
     let state = Sql::new(pool.clone(), world_address).await?;
-    state.load_from_manifest(manifest.clone()).await?;
     let processors = Processors {
         event: vec![
             Box::new(RegisterComponentProcessor),
@@ -92,8 +90,7 @@ async fn main() -> anyhow::Result<()> {
         ..Processors::default()
     };
 
-    let indexer =
-        Indexer::new(&state, &provider, processors, manifest, world_address, args.start_block);
+    let indexer = Indexer::new(&state, &provider, processors, world_address, args.start_block);
     let graphql = torii_graphql::server::start(pool.clone());
     let grpc = torii_grpc::server::start(pool);
 

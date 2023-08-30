@@ -196,6 +196,8 @@ impl State for Sql {
         }
 
         self.queue(queries).await;
+        self.execute().await?;
+
         // Since previous query has not been executed, we have to make sure created_at exists
         let created_at: DateTime<Utc> =
             match sqlx::query("SELECT created_at FROM components WHERE id = ?")
