@@ -8,7 +8,6 @@ version = "0.3.3"
 
 [dependencies]
 cubit = { git = "https://github.com/ponderingdemocritus/cubit" }
-
-dojo = { path = "../dojo-core" }
+dojo = { git = "https://github.com/dojoengine/dojo", tag="nightly-bbdd5f22a8238cfa17212df217b339712e4e714c" }
 
 [[target.dojo]]
